@@ -16,19 +16,19 @@ public enum Op {
      */
     equals,
     /**
-     * > operator
+     * ">" operator
      */
     G,
     /**
-     * >= operator
+     * ">=" operator
      */
     GE,
     /**
-     * < operator
+     * "<" operator
      */
     L,
     /**
-     * < operator
+     * "<" operator
      */
     LE,
     /**
@@ -36,7 +36,7 @@ public enum Op {
      */
     E,
     /**
-     * != operator
+     * "!=" operator
      */
     NE,
     /**
@@ -44,19 +44,19 @@ public enum Op {
      */
     not_contains,
     /**
-     * logical operaptr &&
+     * logical operaptr AND
      */
     AND,
     /**
-     * logical operator ||
+     * logical operator OR
      */
     OR,
     /**
-     * negate version of &&
+     * negate version of AND
      */
     NOT_AND,
     /**
-     * negate version of ||
+     * negate version of OR
      */
     NOT_OR,
     /**

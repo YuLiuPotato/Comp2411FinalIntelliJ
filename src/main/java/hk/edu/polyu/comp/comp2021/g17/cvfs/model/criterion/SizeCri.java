@@ -5,7 +5,7 @@ import hk.edu.polyu.comp.comp2021.g17.cvfs.model.file.File;
 /**
  * A subclass of Criterion representing Criterion that asserts on size of a <code>File</code>
  *
- * @see Critetion
+ * @see Criterion
  * @see File
  */
 public class SizeCri extends Criterion{

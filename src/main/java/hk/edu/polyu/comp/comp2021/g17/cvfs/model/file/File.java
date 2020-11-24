@@ -40,9 +40,10 @@ public abstract class File {
     /**
      * Constructor to be used by its child classes
      *
-     * @param fileType Type of the file to be constructed, either Document or Directory @see fileType
-     * @param name Name of the file with constraints. @see name
-     * @param size Size of the file to be constructed. @see size
+     * @param fileType Type of the file to be constructed, either Document or Directory
+     * @see FileType
+     * @param name Name of the file with constraints.
+     * @param size Size of the file to be constructed.
      * @param content Content of the file. @see content
      * @throws IllegalArgumentException This exception shall be thrown when the name passed does not meet the constraints specified
      */

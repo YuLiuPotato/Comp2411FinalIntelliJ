@@ -32,6 +32,7 @@ public class FileSystem {
     private HashMap<String,Criterion> criteria;
     
     private ArrayList<String> commandHistory;
+    private ArrayList<String> canAddToHistory;
     private LinkedList<String> redoStack;
     private int commandPtr; //points to last command
 
@@ -49,6 +50,9 @@ public class FileSystem {
         criteria = new HashMap<String, Criterion>();
         criteria.put("isDocument",Criterion.genIsDocument());
         commandHistory = new ArrayList<String>();
+        canAddToHistory = new ArrayList<String>();
+        canAddToHistory.addAll(Arrays.asList("newDisk","newDir","newDoc","delete","newSimpleCri"
+        ,"newNegation","newBinaryCri","store","load","undo","redo"));
         commandPtr = -1;
         redoStack = new LinkedList<String>();
         Scanner sc = new Scanner(System.in);
@@ -76,7 +80,7 @@ public class FileSystem {
                         //regular command
                         //store the command
                         //forward the pointer
-                        if (commandName.compareTo("undo") != 0 && commandName.compareTo("undo") != 0) {
+                        if (canAddToHistory.contains(commandName)) {
                             commandHistory.add(++commandPtr, commandName + " " + args);
                         }
 
