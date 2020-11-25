@@ -48,7 +48,7 @@ class DirectoryTest {
 			int oriSize = d0.getSize();
 			d2.newDir("testDir2");
 			assertEquals("[.,..,testDir2]", d2.toString(1), "Directory should contain desired contents");
-			assertEquals(oriSize + 80, d0.getSize(), "Sizes of parent directories should detect the change");
+			assertEquals(oriSize + 40, d0.getSize(), "Sizes of parent directories should detect the change");
 		} catch (Exception e) {
 			System.out.println(e.getMessage());
 			e.printStackTrace();

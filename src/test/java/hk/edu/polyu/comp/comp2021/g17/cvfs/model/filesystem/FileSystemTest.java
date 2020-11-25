@@ -131,8 +131,6 @@ class FileSystemTest {
             assertEquals(testdoc.getContent(),"98kg");
             assertEquals(testdoc.getSize(),40+4*2);
             assertEquals(fileSystem.currentDisk.getcwd().getSize(), 40+40+40+4*2);
-            fileSystem.newDoc("java1 java \"javafile\"");
-            fileSystem.newDoc("css1 css \"cssfile\"");
         }
         catch (Exception e){
             e.printStackTrace();

@@ -108,6 +108,8 @@ public class FileSystem {
                     }
                 }
 
+            }catch (IOException ioe){
+                System.err.print("Local File System IO Error");
             }catch(Throwable e) {
                 System.err.println(e.getMessage());
             }
@@ -197,7 +199,7 @@ public class FileSystem {
             else dType = DocumentType.java;
             currentDisk.newDoc(name, dType, content);
         }catch(NoSuchElementException e) {
-            throw new UsageException("Usage: newDoc <name, type, \"content\"> (content should be double quoted");
+            throw new UsageException("Usage: newDoc <name, type, \"content\"> (content should be double quoted)");
         }
 
     }
@@ -587,7 +589,7 @@ public class FileSystem {
     /**
      * Undo the last command
      * Currently only support undo for "newDir", "newDoc" and "rename"
-     * @param args User input argument String. An empty String is exptected
+     * @param args User input argument String. An empty String is expected
      * @throws UsageException thrown when argument count does not match
      */
     public void undo(String args) throws UsageException {

@@ -119,7 +119,6 @@ public class Directory extends File{
      */
     public void newDir(String name) throws IllegalArgumentException {
         Directory newdir = new Directory(name,this);
-        changeSize(this.getParent(), newdir,'+');
     }
 
     /**
