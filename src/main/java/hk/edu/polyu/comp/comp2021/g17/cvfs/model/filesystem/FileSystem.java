@@ -30,7 +30,7 @@ public class FileSystem {
     /**
      * set public for testing purpose
      */
-    public ArrayList<Disk> disks;
+    public ArrayList<Disk> disks = new ArrayList<Disk>();
     /**
      * set public for testing purpose
      */
@@ -38,19 +38,26 @@ public class FileSystem {
     /**
      * set public for testing purpose
      */
-    public HashMap<String,Criterion> criteria;
+    public HashMap<String,Criterion> criteria = new HashMap<String, Criterion>();
     /**
      * set public for testing purpose
      */
-    public ArrayList<String> commandHistory;
+    public ArrayList<String> commandHistory = new ArrayList<String>();
     /**
      * set public for testing purpose
      */
-    public LinkedList<String> redoStack;
+    public LinkedList<String> redoStack = new LinkedList<String>();
     /**
      * set public for testing purpose
      */
-    public int commandPtr; //points to last command
+    public int commandPtr = -1; //points to last command
+
+    /**
+     * set public for testing purpose
+     */
+
+    public ArrayList<String> canAddToHistory = new ArrayList<String>(Arrays.asList("newDisk","newDir","newDoc","delete","newSimpleCri"
+            ,"newNegation","newBinaryCri","store","load","rename"));
 
     /**
      * Interface Constructor
@@ -61,16 +68,6 @@ public class FileSystem {
         //Calling constructor is when the system is entered. Interaction begins here
         //Arguments are passed as String
 
-        //initialization
-        disks = new ArrayList<Disk>();
-        criteria = new HashMap<String, Criterion>();
-        criteria.put("isDocument",Criterion.genIsDocument());
-        commandHistory = new ArrayList<String>();
-        ArrayList<String> canAddToHistory = new ArrayList<String>();
-        canAddToHistory.addAll(Arrays.asList("newDisk","newDir","newDoc","delete","newSimpleCri"
-        ,"newNegation","newBinaryCri","store","load","rename"));
-        commandPtr = -1;
-        redoStack = new LinkedList<String>();
         Scanner sc = new Scanner(System.in);
         String commandName;
         String args;
@@ -464,11 +461,9 @@ public class FileSystem {
         //create a directory in path
         path = extendPath(path, dir.getName());
 
-        try {
-            Files.createDirectory(path);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+
+        Files.createDirectory(path);
+
 
         ArrayList<File> files = dir.getFiles();
 

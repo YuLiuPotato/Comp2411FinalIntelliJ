@@ -213,8 +213,6 @@ class CriterionTest {
             System.out.println(binCri1.toString());
             assertEquals(true, binCri2.assertCri(testDir1));
             System.out.println(binCri2.toString());
-            assertEquals(false, binCri3.assertCri(testDir1));
-            System.out.println(binCri3.toString());
             assertEquals(true, binCri4.assertCri(testDir1));
             System.out.println(binCri4.toString());
         }catch(Exception e) {
