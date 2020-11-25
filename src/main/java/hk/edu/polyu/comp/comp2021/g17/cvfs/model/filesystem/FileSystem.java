@@ -32,7 +32,6 @@ public class FileSystem {
     private HashMap<String,Criterion> criteria;
     
     private ArrayList<String> commandHistory;
-    private ArrayList<String> canAddToHistory;
     private LinkedList<String> redoStack;
     private int commandPtr; //points to last command
 
@@ -50,7 +49,7 @@ public class FileSystem {
         criteria = new HashMap<String, Criterion>();
         criteria.put("isDocument",Criterion.genIsDocument());
         commandHistory = new ArrayList<String>();
-        canAddToHistory = new ArrayList<String>();
+        ArrayList<String> canAddToHistory = new ArrayList<String>();
         canAddToHistory.addAll(Arrays.asList("newDisk","newDir","newDoc","delete","newSimpleCri"
         ,"newNegation","newBinaryCri","store","load","rename"));
         commandPtr = -1;
@@ -96,7 +95,7 @@ public class FileSystem {
                 }
 
             }catch(Throwable e) {
-                System.out.println(e.getMessage());
+                System.err.println(e.getMessage());
             }
 
         }
@@ -124,16 +123,13 @@ public class FileSystem {
      */
     public void newDisk(String args) throws UsageException {
         //parameter parsing ignores the insignificant parts
-        Scanner sc = new Scanner(args);
-        try {
+        try (Scanner sc = new Scanner(args)) {
             int size = sc.nextInt();
             if (sc.hasNext()) throw new UsageException("Usage: newDisk <diskSize>");
             currentDisk = new Disk(size);
             disks.add(currentDisk);
-        }catch(NoSuchElementException e) {
+        } catch (NoSuchElementException e) {
             throw new UsageException("Usage: newDisk <diskSize>");
-        }finally {
-            sc.close();
         }
     }
 
@@ -146,16 +142,13 @@ public class FileSystem {
      * @throws MemoryException thrwon when disk does not have enough memory to accpet a new directory
      */
     public  void newDir(String args) throws UsageException, IllegalArgumentException, MemoryException {
-        Scanner sc = new Scanner(args);
-        try {
+        try (Scanner sc = new Scanner(args)) {
             String name = sc.next();
             if (sc.hasNext()) throw new UsageException("Usage: newDir <dirName>");
             if (currentDisk == null) throw new MemoryException("No disk found. Try command 'newDisk' first");
             currentDisk.newDir(name);
-        }catch(NoSuchElementException e) {
+        } catch (NoSuchElementException e) {
             throw new UsageException("Usage: newDir <dirName>");
-        }finally {
-            sc.close();
         }
     }
 
@@ -199,17 +192,14 @@ public class FileSystem {
      * @throws IllegalArgumentException thrown when 1)no such file in current working directory 2)"." or ".." is passed
      */
     public void delete(String args) throws UsageException, IllegalArgumentException {
-        Scanner sc = new Scanner(args);
-        try {
+        try (Scanner sc = new Scanner(args)) {
             String name = sc.next();
-            if (sc.hasNext())  throw new UsageException("Usage: delete <docName>");
+            if (sc.hasNext()) throw new UsageException("Usage: delete <docName>");
             if (currentDisk == null) throw new IllegalArgumentException("No disk found. Try command 'newDisk' first");
 
             currentDisk.delete(name);
-        }catch(NoSuchElementException e) {
+        } catch (NoSuchElementException e) {
             throw new UsageException("Usage: delete <docName>");
-        }finally {
-            sc.close();
         }
     }
 
@@ -222,18 +212,15 @@ public class FileSystem {
      * 3)new name is not a valid name 4)try to rename '.' or '..'
      */
     public  void rename(String args) throws UsageException, IllegalArgumentException {
-        Scanner sc = new Scanner(args);
-        try {
+        try (Scanner sc = new Scanner(args)) {
             String oldName = sc.next();
             String newName = sc.next();
             if (sc.hasNext()) throw new UsageException("Usage: rename <oldName, newName>");
             if (currentDisk == null) throw new IllegalArgumentException("No disk found. Try command 'newDisk' first");
 
             currentDisk.rename(oldName, newName);
-        }catch(NoSuchElementException e) {
+        } catch (NoSuchElementException e) {
             throw new UsageException("Usage: rename <oldName, newName>");
-        }finally {
-            sc.close();
         }
     }
 
@@ -245,17 +232,14 @@ public class FileSystem {
      * @throws IllegalArgumentException thrown when 1)the file does not exist 2)file specified is not a directory
      */
     public  void changeDir(String args) throws UsageException, IllegalArgumentException {
-        Scanner sc = new Scanner(args);
-        try {
+        try (Scanner sc = new Scanner(args)) {
             String name = sc.next();
             if (sc.hasNext()) throw new UsageException("Usage: changeDir <dirName>");
             if (currentDisk == null) throw new IllegalArgumentException("No disk found. Try command 'newDisk' first");
 
             currentDisk.changeDir(name);
-        }catch(NoSuchElementException e) {
+        } catch (NoSuchElementException e) {
             throw new UsageException("Usage: changeDir <dirName>");
-        }finally {
-            sc.close();
         }
     }
 
@@ -266,14 +250,11 @@ public class FileSystem {
      * @throws UsageException thrown when args is not an empty String
      */
     public void list(String args) throws UsageException {
-        Scanner sc = new Scanner(args);
-        try {
+        try (Scanner sc = new Scanner(args)) {
             if (sc.hasNext()) throw new UsageException("Usage: list");
             if (currentDisk == null) throw new IllegalArgumentException("No disk found. Try command 'newDisk' first");
 
             currentDisk.list();
-        }finally {
-            sc.close();
         }
     }
 
@@ -283,14 +264,11 @@ public class FileSystem {
      * @throws UsageException thrown when args is not an empty String
      */
     public  void rList(String args) throws UsageException {
-        Scanner sc = new Scanner(args);
-        try {
+        try (Scanner sc = new Scanner(args)) {
             if (sc.hasNext()) throw new UsageException("Usage: rList <>");
             if (currentDisk == null) throw new IllegalArgumentException("No disk found. Try command 'newDisk' first");
 
             currentDisk.rList();
-        }finally {
-            sc.close();
         }
     }
 
@@ -303,20 +281,17 @@ public class FileSystem {
      * @see Criterion
      */
     public  void newSimpleCri(String args) throws UsageException, IllegalArgumentException {
-        Scanner sc = new Scanner(args);
 
-        try {
+        try (Scanner sc = new Scanner(args)) {
             String[] argStrings = new String[4];
-            for (int i=0; i<4; i++) {
+            for (int i = 0; i < 4; i++) {
                 argStrings[i] = sc.next();
             }
-            
+
             if (sc.hasNext()) throw new UsageException("Usage: newSimpleCri <name, attrname, oprator, oprand>");
-            criteria.put(argStrings[0], Criterion.newSimpleCri(argStrings[0],argStrings[1],argStrings[2],argStrings[3]));
-        }catch(NoSuchElementException nsee) {
+            criteria.put(argStrings[0], Criterion.newSimpleCri(argStrings[0], argStrings[1], argStrings[2], argStrings[3]));
+        } catch (NoSuchElementException nsee) {
             throw new UsageException("Usage: newSimpleCri <name, attrname, oprator, oprand>");
-        }finally {
-            sc.close();
         }
 
     }
@@ -329,19 +304,17 @@ public class FileSystem {
      * 3)one or more specified criterions do not exist 4)criterion thus named already exists
      */
     public  void newNegation(String args) throws UsageException, IllegalArgumentException {
-        Scanner sc = new Scanner(args);
 
-        try {
+        try (Scanner sc = new Scanner(args)) {
             String negName = sc.next();
-            if (criteria.get(negName) != null) throw new IllegalArgumentException(negName + " already exists");
             String toNegName = sc.next();
+
             Criterion toNegCri = criteria.get(toNegName);
+            if (criteria.get(negName) != null) throw new IllegalArgumentException(negName + " already exists");
             if (toNegCri == null) throw new IllegalArgumentException("No criterion: " + toNegName);
             criteria.put(negName, Criterion.newNegation(negName, toNegCri));
-        }catch(NoSuchElementException nsee) {
+        } catch (NoSuchElementException nsee) {
             throw new UsageException("Usage: newNegation <name, criterion>");
-        }finally {
-            sc.close();
         }
     }
 
@@ -354,11 +327,10 @@ public class FileSystem {
      * 3)one or more specified criterions do not exist 4)criterion thus named already exists
      */
     public  void newBinaryCri(String args) throws UsageException, IllegalArgumentException {
-        Scanner sc = new Scanner(args);
 
-        try {
+        try (Scanner sc = new Scanner(args)) {
             String[] argStrings = new String[4];
-            for (int i=0; i<4; i++) {
+            for (int i = 0; i < 4; i++) {
                 argStrings[i] = sc.next();
             }
 
@@ -370,11 +342,9 @@ public class FileSystem {
             if (cri1 == null) throw new IllegalArgumentException(argStrings[1] + " does not exist");
             if (cri2 == null) throw new IllegalArgumentException(argStrings[2] + " does not exist");
 
-            criteria.put(argStrings[0],Criterion.newBinaryCri(argStrings[0], cri1, cri2, argStrings[3]));
-        }catch(NoSuchElementException nsee) {
+            criteria.put(argStrings[0], Criterion.newBinaryCri(argStrings[0], cri1, cri2, argStrings[3]));
+        } catch (NoSuchElementException nsee) {
             throw new UsageException("Usage: newBinaryCri <name, cri1, cri2, binaryOperator>");
-        }finally {
-            sc.close();
         }
     }
 
@@ -403,9 +373,8 @@ public class FileSystem {
      * @throws IllegalArgumentException thrown when 1)criterion specified does not exist
      */
     public void search(String args) throws UsageException, IllegalArgumentException {
-        Scanner sc = new Scanner(args);
 
-        try {
+        try (Scanner sc = new Scanner(args)) {
             String criName = sc.next();
             Criterion cri = criteria.get(criName);
             if (cri == null) throw new IllegalArgumentException("Criterion '" + criName + "' does not exist");
@@ -415,13 +384,11 @@ public class FileSystem {
             ArrayList<File> files = currentDisk.getcwd().getFiles();
 
             for (File f : files) {
-                if(cri.assertCri(f)) System.out.println(f.toString());
+                if (cri.assertCri(f)) System.out.println(f.toString());
             }
 
-        }catch(NoSuchElementException nsee) {
+        } catch (NoSuchElementException nsee) {
             throw new UsageException("Usage: search <criName>");
-        }finally {
-            sc.close();
         }
     }
 
@@ -432,9 +399,8 @@ public class FileSystem {
      * @throws IllegalArgumentException thrown when 1)criterion specified does not exist
      */
     public  void rSearch(String args) throws IllegalArgumentException, UsageException {
-        Scanner sc = new Scanner(args);
 
-        try {
+        try (Scanner sc = new Scanner(args)) {
             String criName = sc.next();
             Criterion cri = criteria.get(criName);
             if (cri == null) throw new IllegalArgumentException("Criterion '" + criName + "' does not exist");
@@ -443,13 +409,11 @@ public class FileSystem {
             ArrayList<File> files = currentDisk.getcwd().rGetFiles();
 
             for (File f : files) {
-                if(cri.assertCri(f)) System.out.println(f.toString());
+                if (cri.assertCri(f)) System.out.println(f.toString());
             }
 
-        }catch(NoSuchElementException nsee) {
+        } catch (NoSuchElementException nsee) {
             throw new UsageException("Usage: rSearch <criName>");
-        }finally {
-            sc.close();
         }
     }
 
@@ -458,9 +422,7 @@ public class FileSystem {
         String pathString = path.toString();
         String[] paths = pathString.split("\\\\");
         String[] pathArray = new String[paths.length];
-        for(int i=1; i<paths.length; i++) {
-            pathArray[i-1] = paths[i];
-        }
+        if (paths.length - 1 >= 0) System.arraycopy(paths, 1, pathArray, 0, paths.length - 1);
         pathArray[pathArray.length-1] = toAdd;
 
         Path pathNew = FileSystems.getDefault().getPath(paths[0],pathArray);
@@ -471,9 +433,7 @@ public class FileSystem {
     private Path buildPath(String pathString) {
         String[] paths = pathString.split("\\\\");
         String[] pathArray = new String[paths.length-1];
-        for(int i=1; i<paths.length; i++) {
-            pathArray[i-1] = paths[i];
-        }
+        if (paths.length - 1 >= 0) System.arraycopy(paths, 1, pathArray, 0, paths.length - 1);
         Path path = FileSystems.getDefault().getPath(paths[0].trim(),pathArray);
 
         return path;
@@ -494,23 +454,15 @@ public class FileSystem {
         for (File file : files) {
             if(file instanceof Document) {
                 //this file is a document, write it
-                try {
-                    BufferedWriter bw = Files.newBufferedWriter(extendPath(path,file.getName() + "." + ((Document)file).getDocumentType().name()));
-                    bw.write((String)file.getContent());
-                    bw.close();
-                }catch(IOException e) {
-                    throw e;
-                }
+                BufferedWriter bw = Files.newBufferedWriter(extendPath(path,file.getName() + "." + ((Document)file).getDocumentType().name()));
+                bw.write((String)file.getContent());
+                bw.close();
             }
 
             else {
                 //this file is a directory, call create
-                try {
 
-                    store((Directory)file,path);
-                } catch (IOException e) {
-                    throw e;
-                }
+                store((Directory)file,path);
             }
         }
     }
@@ -524,19 +476,16 @@ public class FileSystem {
      * @throws IOException thrown when unexpected IO operation occurs
      */
     public  void store(String args) throws UsageException, IOException {
-        Scanner sc = new Scanner(args);
 
-        try {
+        try (Scanner sc = new Scanner(args)) {
             String input = sc.nextLine();
             Path path = buildPath(input);
 
             if (currentDisk == null) throw new IllegalArgumentException("No disk found. Try command 'newDisk' first");
 
-            store(currentDisk.getRoot(),path);
-        }catch(NoSuchElementException nsee) {
+            store(currentDisk.getRoot(), path);
+        } catch (NoSuchElementException nsee) {
             throw new UsageException("Usage: store <pathname>");
-        }finally {
-            sc.close();
         }
     }
 
@@ -556,7 +505,7 @@ public class FileSystem {
         StringBuilder sb = new StringBuilder();
         String line = br.readLine();
         while (line != null) {
-            sb.append(line + "\n");
+            sb.append(line).append("\n");
             line = br.readLine();
         }
         return sb.toString();
@@ -594,19 +543,16 @@ public class FileSystem {
      * @throws IOException thrown when unexpected IO operation occurs
      */
     public void load(String args) throws UsageException, IOException {
-        Scanner sc = new Scanner(args);
 
-        try {
+        try (Scanner sc = new Scanner(args)) {
             String input = sc.nextLine();
             Path path = buildPath(input);
             if (currentDisk == null) throw new IllegalArgumentException("No disk found. Try command 'newDisk' first");
 
-            load(path,currentDisk.getcwd());
+            load(path, currentDisk.getcwd());
 
-        }catch(NoSuchElementException nsee) {
+        } catch (NoSuchElementException nsee) {
             throw new UsageException("Usage: load <pathname>");
-        }finally {
-            sc.close();
         }
     }
 

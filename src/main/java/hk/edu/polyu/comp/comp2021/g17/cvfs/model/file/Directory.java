@@ -313,7 +313,6 @@ public class Directory extends File{
 
                 else {
                     if (fileName.compareTo("..") == 0 || fileName.compareTo(".") == 0) {
-                        continue;
                     } else {
                         result.add(file);
                         Directory dir = (Directory) file;

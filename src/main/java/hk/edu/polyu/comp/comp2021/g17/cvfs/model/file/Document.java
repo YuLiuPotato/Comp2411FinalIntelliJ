@@ -18,7 +18,6 @@ public class Document extends File {
      * In addition, a DocumentType is passed in to indicate the DocumentType of this Documenet
      *
      * @param name Name of the document, with specified constraints.
-     * @see File#name
      * @param type DocumentType of the document
      * @see DocumentType
      * @param content A string represent content of the document

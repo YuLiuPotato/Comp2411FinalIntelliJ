@@ -1,6 +1,5 @@
 package hk.edu.polyu.comp.comp2021.g17.cvfs.model.file;
 
-import com.sun.org.glassfish.gmbal.ManagedObject;
 import hk.edu.polyu.comp.comp2021.g17.cvfs.model.exception.MemoryException;
 
 import java.util.LinkedList;
@@ -71,7 +70,7 @@ public class Disk {
         if (path == null) return "";
 
         for (String s : path){
-            sb.append(s + ":");
+            sb.append(s).append(":");
         }
 
         return sb.toString();

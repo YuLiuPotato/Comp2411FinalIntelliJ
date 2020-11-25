@@ -1,7 +1,5 @@
 package hk.edu.polyu.comp.comp2021.g17.cvfs.model.exception;
 
-import com.sun.org.glassfish.gmbal.ManagedObject;
-
 
 /**
  * An Exception to handle memory issue

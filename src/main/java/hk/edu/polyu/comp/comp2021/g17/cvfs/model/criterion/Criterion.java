@@ -47,7 +47,7 @@ public abstract class Criterion{
         return val;
     }
 
-    private AttrName attrname;;
+    private AttrName attrname;
     private Op op;
     private Object val;
 
@@ -76,16 +76,13 @@ public abstract class Criterion{
     }
 
     private boolean isLetter(char character) {
-        if (((int)character >= (int)'A' && (int)character <= (int)'Z') || ((int)character >= (int)'a' && (int)character <= (int)'z')){
-            return true;
-        }
-        return false;
+        return ((int) character >= (int) 'A' && (int) character <= (int) 'Z') || ((int) character >= (int) 'a' && (int) character <= (int) 'z');
     }
 
     private boolean isValidCriName(String name) {
         if (name.compareTo("isDocument") == 0) return true;
         if (name.length() == 2) {
-            if (isLetter(name.charAt(0)) && isLetter(name.charAt(1))) {return true;}
+            return isLetter(name.charAt(0)) && isLetter(name.charAt(1));
         }
 
         return false;
