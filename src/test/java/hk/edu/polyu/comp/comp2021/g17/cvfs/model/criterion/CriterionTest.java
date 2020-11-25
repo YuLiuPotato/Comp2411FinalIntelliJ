@@ -21,6 +21,11 @@ class CriterionTest {
     Criterion criName1;
     Criterion criType1;
     Criterion criSize1;
+    Criterion criSize2;
+    Criterion criSize3;
+    Criterion criSize4;
+    Criterion criSize5;
+
 
     Criterion isDocument;
     Criterion binCri1;
@@ -28,7 +33,7 @@ class CriterionTest {
     Criterion binCri3;
     Criterion binCri4;
 
-    Criterion negCri1, negCri2, negCri3;
+    Criterion negCri1, negCri2, negCri3,negCri4, negCri5, negCri6,negCri7, negCri8, negCri9,negCri10, negCri11, negCri12;
 
     CriterionTest() {
         try {
@@ -40,13 +45,17 @@ class CriterionTest {
 
             criName = Criterion.newSimpleCri("cn", "name", "contains", "testDoc1");
             criSize = Criterion.newSimpleCri("sc", "size", "<=", "100");
-            criType = Criterion.newSimpleCri("ct", "type", "==", "txt");
+            criType = Criterion.newSimpleCri("ct", "type", "equals", "txt");
             isDocument = Criterion.genIsDocument();
 
             //
             criName1 = Criterion.newSimpleCri("cn", "name", "contains", "test");
             criSize1 = Criterion.newSimpleCri("sc", "size", "<=", "70");
             criType1 = Criterion.newSimpleCri("ct", "type", "equals", "html");
+            criSize2= Criterion.newSimpleCri("sc","size",">","60");
+            criSize3= Criterion.newSimpleCri("sc","size","<","60");
+            criSize4= Criterion.newSimpleCri("sc","size","==","62");
+            criSize5=Criterion.newSimpleCri("sc","size","!=","100");
 
             binCri1 = Criterion.newBinaryCri("bc", criName, criSize, "AND");
             binCri2 = Criterion.newBinaryCri("bc", criName, criSize, "OR");
@@ -54,6 +63,15 @@ class CriterionTest {
             negCri1 = Criterion.newNegation("nn", criName);
             negCri2 = Criterion.newNegation("nn", negCri1);
             negCri3 = Criterion.newNegation("nn", binCri1);
+            negCri4= Criterion.newNegation("nn",criSize);
+            negCri5= Criterion.newNegation("nn",criSize1);
+            negCri6= Criterion.newNegation("nn",criSize2);
+            negCri7= Criterion.newNegation("nn",criSize3);
+            negCri8= Criterion.newNegation("nn",criSize4);
+            negCri9= Criterion.newNegation("nn",criSize5);
+            negCri10=Criterion.newNegation("nn",criType);
+            negCri11=Criterion.newNegation("nn",negCri10);
+            negCri12=Criterion.newNegation("nn",binCri2);
 
             //
             binCri3=Criterion.newBinaryCri("bc", criType, isDocument,"AND");
@@ -79,24 +97,69 @@ class CriterionTest {
             System.out.println(isDocument.toString());
 
             //
+            //注意 改一下
             assertEquals(true, criName1.assertCri(testDoc2));
-            System.out.println(criName.toString());
+            System.out.println(criName1.toString());
             assertEquals(false, criType1.assertCri(testDoc2));
-            System.out.println(criType.toString());
+            System.out.println(criType1.toString());
             assertEquals(true, criSize1.assertCri(testDoc2));
-            System.out.println(criSize.toString());
+            System.out.println(criSize1.toString());
             assertEquals(true, criName1.assertCri(testDoc3));
-            System.out.println(criName.toString());
+            System.out.println(criName1.toString());
             assertEquals(true, criType1.assertCri(testDoc3));
-            System.out.println(criType.toString());
+            System.out.println(criType1.toString());
             assertEquals(true, criSize1.assertCri(testDoc3));
-            System.out.println(criSize.toString());
+            System.out.println(criSize1.toString());
             assertEquals(true, criName1.assertCri(testDoc4));
-            System.out.println(criName.toString());
+            System.out.println(criName1.toString());
             assertEquals(false, criType1.assertCri(testDoc4));
-            System.out.println(criType.toString());
+            System.out.println(criType1.toString());
             assertEquals(true, criSize1.assertCri(testDoc4));
-            System.out.println(criSize.toString());
+            System.out.println(criSize1.toString());
+
+            //
+            assertEquals(true, criSize2.assertCri(testDoc1));
+            System.out.println(criSize2.toString());
+            assertEquals(true, criSize2.assertCri(testDoc2));
+            System.out.println(criSize2.toString());
+            assertEquals(true, criSize2.assertCri(testDoc3));
+            System.out.println(criSize2.toString());
+            assertEquals(false, criSize2.assertCri(testDoc4));
+            System.out.println(criSize2.toString());
+            assertEquals(false, criSize2.assertCri(testDir1));
+            System.out.println(criSize2.toString());
+            assertEquals(false, criSize3.assertCri(testDoc1));
+            System.out.println(criSize3.toString());
+            assertEquals(false, criSize3.assertCri(testDoc2));
+            System.out.println(criSize3.toString());
+            assertEquals(false, criSize3.assertCri(testDoc3));
+            System.out.println(criSize3.toString());
+            assertEquals(false, criSize3.assertCri(testDoc4));
+            System.out.println(criSize3.toString());
+            assertEquals(true, criSize3.assertCri(testDir1));
+            System.out.println(criSize3.toString());
+            assertEquals(true, criSize4.assertCri(testDoc1));
+            System.out.println(criSize4.toString());
+            assertEquals(true, criSize4.assertCri(testDoc2));
+            System.out.println(criSize4.toString());
+            assertEquals(true, criSize4.assertCri(testDoc3));
+            System.out.println(criSize4.toString());
+            assertEquals(false, criSize4.assertCri(testDoc4));
+            System.out.println(criSize4.toString());
+            assertEquals(false, criSize4.assertCri(testDir1));
+            System.out.println(criSize4.toString());
+            assertEquals(true, criSize5.assertCri(testDoc1));
+            System.out.println(criSize5.toString());
+            assertEquals(true, criSize5.assertCri(testDoc2));
+            System.out.println(criSize5.toString());
+            assertEquals(true, criSize5.assertCri(testDoc3));
+            System.out.println(criSize5.toString());
+            assertEquals(true, criSize5.assertCri(testDoc4));
+            System.out.println(criSize5.toString());
+            assertEquals(true, criSize5.assertCri(testDir1));
+            System.out.println(criSize5.toString());
+
+
         }catch(Exception e) {
             e.printStackTrace();
         }
@@ -168,33 +231,135 @@ class CriterionTest {
             System.out.println(negCri1.toString());
             assertEquals(true, negCri2.assertCri(testDoc1));
             System.out.println(negCri2.toString());
-            assertEquals(true, negCri3.assertCri(testDoc2));
-            System.out.println(negCri3.toString());
-            //
             assertEquals(false, negCri3.assertCri(testDoc1));
             System.out.println(negCri3.toString());
+            assertEquals(false, negCri4.assertCri(testDoc1));
+            System.out.println(negCri4.toString());
+            assertEquals(false, negCri5.assertCri(testDoc1));
+            System.out.println(negCri5.toString());
+            assertEquals(false, negCri6.assertCri(testDoc1));
+            System.out.println(negCri6.toString());
+            assertEquals(true, negCri7.assertCri(testDoc1));
+            System.out.println(negCri7.toString());
+            assertEquals(false, negCri8.assertCri(testDoc1));
+            System.out.println(negCri8.toString());
+            assertEquals(false, negCri9.assertCri(testDoc1));
+            System.out.println(negCri9.toString());
+            assertEquals(false, negCri10.assertCri(testDoc1));
+            System.out.println(negCri10.toString());
+            assertEquals(true, negCri11.assertCri(testDoc1));
+            System.out.println(negCri11.toString());
+            assertEquals(false, negCri12.assertCri(testDoc1));
+            System.out.println(negCri12.toString());
+
+
+
+
+
+
+
             assertEquals(true, negCri1.assertCri(testDoc2));
             System.out.println(negCri1.toString());
             assertEquals(false, negCri2.assertCri(testDoc2));
             System.out.println(negCri2.toString());
+            assertEquals(true, negCri3.assertCri(testDoc2));
+            System.out.println(negCri3.toString());
+            assertEquals(false, negCri4.assertCri(testDoc2));
+            System.out.println(negCri4.toString());
+            assertEquals(false, negCri5.assertCri(testDoc2));
+            System.out.println(negCri5.toString());
+            assertEquals(false, negCri6.assertCri(testDoc2));
+            System.out.println(negCri6.toString());
+            assertEquals(true, negCri7.assertCri(testDoc2));
+            System.out.println(negCri7.toString());
+            assertEquals(false, negCri8.assertCri(testDoc2));
+            System.out.println(negCri8.toString());
+            assertEquals(false, negCri9.assertCri(testDoc2));
+            System.out.println(negCri9.toString());
+            assertEquals(true, negCri10.assertCri(testDoc2));
+            System.out.println(negCri10.toString());
+            assertEquals(false, negCri11.assertCri(testDoc2));
+            System.out.println(negCri11.toString());
+            assertEquals(false, negCri12.assertCri(testDoc2));
+            System.out.println(negCri12.toString());
+
+
+
+
+
             assertEquals(true, negCri1.assertCri(testDoc3));
             System.out.println(negCri1.toString());
             assertEquals(false, negCri2.assertCri(testDoc3));
             System.out.println(negCri2.toString());
             assertEquals(true, negCri3.assertCri(testDoc3));
             System.out.println(negCri3.toString());
+            assertEquals(false, negCri4.assertCri(testDoc3));
+            System.out.println(negCri4.toString());
+            assertEquals(false, negCri5.assertCri(testDoc3));
+            System.out.println(negCri5.toString());
+            assertEquals(false, negCri6.assertCri(testDoc3));
+            System.out.println(negCri6.toString());
+            assertEquals(true, negCri7.assertCri(testDoc3));
+            System.out.println(negCri7.toString());
+            assertEquals(false, negCri8.assertCri(testDoc3));
+            System.out.println(negCri8.toString());
+            assertEquals(false, negCri9.assertCri(testDoc3));
+            System.out.println(negCri9.toString());
+            assertEquals(true, negCri10.assertCri(testDoc3));
+            System.out.println(negCri10.toString());
+            assertEquals(false, negCri11.assertCri(testDoc3));
+            System.out.println(negCri11.toString());
+            assertEquals(false, negCri12.assertCri(testDoc3));
+            System.out.println(negCri12.toString());
+
+
+
             assertEquals(true, negCri1.assertCri(testDoc4));
             System.out.println(negCri1.toString());
             assertEquals(false, negCri2.assertCri(testDoc4));
             System.out.println(negCri2.toString());
             assertEquals(true, negCri3.assertCri(testDoc4));
             System.out.println(negCri3.toString());
+            assertEquals(false, negCri4.assertCri(testDoc4));
+            System.out.println(negCri4.toString());
+            assertEquals(false, negCri5.assertCri(testDoc4));
+            System.out.println(negCri5.toString());
+            assertEquals(true, negCri6.assertCri(testDoc4));
+            System.out.println(negCri6.toString());
+            assertEquals(true, negCri7.assertCri(testDoc4));
+            System.out.println(negCri7.toString());
+            assertEquals(true, negCri8.assertCri(testDoc4));
+            System.out.println(negCri8.toString());
+            assertEquals(false, negCri9.assertCri(testDoc4));
+            System.out.println(negCri9.toString());
+            assertEquals(true, negCri10.assertCri(testDoc4));
+            System.out.println(negCri10.toString());
+            assertEquals(false, negCri11.assertCri(testDoc4));
+            System.out.println(negCri11.toString());
+            assertEquals(false, negCri12.assertCri(testDoc4));
+            System.out.println(negCri12.toString());
+
+
             assertEquals(true, negCri1.assertCri(testDir1));
             System.out.println(negCri1.toString());
             assertEquals(false, negCri2.assertCri(testDir1));
             System.out.println(negCri2.toString());
             assertEquals(true, negCri3.assertCri(testDir1));
             System.out.println(negCri3.toString());
+            assertEquals(false, negCri4.assertCri(testDir1));
+            System.out.println(negCri4.toString());
+            assertEquals(false, negCri5.assertCri(testDir1));
+            System.out.println(negCri5.toString());
+            assertEquals(true, negCri6.assertCri(testDir1));
+            System.out.println(negCri6.toString());
+            assertEquals(false, negCri7.assertCri(testDir1));
+            System.out.println(negCri7.toString());
+            assertEquals(true, negCri8.assertCri(testDir1));
+            System.out.println(negCri8.toString());
+            assertEquals(false, negCri9.assertCri(testDir1));
+            System.out.println(negCri9.toString());
+            assertEquals(false, negCri12.assertCri(testDir1));
+            System.out.println(negCri12.toString());
         }catch(Exception e) {
             e.printStackTrace();
         }
@@ -203,16 +368,19 @@ class CriterionTest {
 
 
     @Test
-    void throwIllegalArgumentTest() {
+    void throwInvalidArgumentTest() {
         assertThrows(IllegalArgumentException.class, () -> Criterion.newSimpleCri("notAValidName","name","contains","ah"));
         assertThrows(IllegalArgumentException.class, () -> Criterion.newSimpleCri("aa","name","equals","ah"));
         assertThrows(IllegalArgumentException.class, () -> Criterion.newSimpleCri("aa","size","contains","ah"));
-        assertThrows(IllegalArgumentException.class, () -> Criterion.newSimpleCri("aa","size","GE","notanumber"));
-        assertThrows(IllegalArgumentException.class, () -> Criterion.newSimpleCri("IsDocument","size","GE","100"));
+        assertThrows(IllegalArgumentException.class, () -> Criterion.newSimpleCri("aa","size",">=","notanumber"));
+        assertThrows(IllegalArgumentException.class, () -> Criterion.newSimpleCri("IsDocument","size",">=","100"));
         assertThrows(IllegalArgumentException.class, () -> Criterion.newBinaryCri("b1",criName,criSize,"AND"));
         assertThrows(IllegalArgumentException.class, () -> Criterion.newBinaryCri("bb",criName,criType,">"));
         assertThrows(IllegalArgumentException.class, () -> Criterion.newBinaryCri("bb",binCri1,isDocument,"Or"));
         assertThrows(IllegalArgumentException.class, () -> Criterion.newNegation("c1",criName));
+
+        assertThrows(IllegalArgumentException.class, () -> Criterion.newSimpleCri("aa","filetype","equals","txt"));
+        assertThrows(IllegalArgumentException.class, () -> Criterion.newSimpleCri("aa","size","E","110.7"));
     }
 
     @Test
@@ -234,4 +402,7 @@ class CriterionTest {
             e.printStackTrace();
         }
     }
+
+
+
 }

@@ -27,13 +27,30 @@ import hk.edu.polyu.comp.comp2021.g17.cvfs.model.file.File;
  * Each mathod correspond to a command
  */
 public class FileSystem {
-    private ArrayList<Disk> disks;
-    private Disk currentDisk;
-    private HashMap<String,Criterion> criteria;
-    
-    private ArrayList<String> commandHistory;
-    private LinkedList<String> redoStack;
-    private int commandPtr; //points to last command
+    /**
+     * set public for testing purpose
+     */
+    public ArrayList<Disk> disks;
+    /**
+     * set public for testing purpose
+     */
+    public Disk currentDisk;
+    /**
+     * set public for testing purpose
+     */
+    public HashMap<String,Criterion> criteria;
+    /**
+     * set public for testing purpose
+     */
+    public ArrayList<String> commandHistory;
+    /**
+     * set public for testing purpose
+     */
+    public LinkedList<String> redoStack;
+    /**
+     * set public for testing purpose
+     */
+    public int commandPtr; //points to last command
 
     /**
      * Interface Constructor
@@ -169,6 +186,10 @@ public class FileSystem {
             String name = sc.next();
             String type = sc.next("(html|txt|css|java)");
             String content = sc.next("\".*\"");
+            StringBuilder temp = new StringBuilder(content);
+            temp.deleteCharAt(content.length()-1);
+            temp.deleteCharAt(0);
+            content = temp.toString();
             if (sc.hasNext()) throw new UsageException("Usage: newDoc <name, type, content>");
             if (currentDisk == null) throw new MemoryException("No disk found. Try command 'newDisk' first");
 
@@ -337,12 +358,12 @@ public class FileSystem {
             if (sc.hasNext()) throw new UsageException("Usage: newBinaryCri <name, cri1, cri2, binaryOperator>");
 
             Criterion cri1 = criteria.get(argStrings[1]);
-            Criterion cri2 = criteria.get(argStrings[2]);
+            Criterion cri2 = criteria.get(argStrings[3]);
 
             if (cri1 == null) throw new IllegalArgumentException(argStrings[1] + " does not exist");
-            if (cri2 == null) throw new IllegalArgumentException(argStrings[2] + " does not exist");
+            if (cri2 == null) throw new IllegalArgumentException(argStrings[3] + " does not exist");
 
-            criteria.put(argStrings[0], Criterion.newBinaryCri(argStrings[0], cri1, cri2, argStrings[3]));
+            criteria.put(argStrings[0], Criterion.newBinaryCri(argStrings[0], cri1, cri2, argStrings[2]));
         } catch (NoSuchElementException nsee) {
             throw new UsageException("Usage: newBinaryCri <name, cri1, cri2, binaryOperator>");
         }

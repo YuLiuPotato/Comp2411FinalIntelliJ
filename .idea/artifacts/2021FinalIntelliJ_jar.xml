@@ -1,0 +1,8 @@
+<component name="ArtifactManager">
+  <artifact type="jar" name="2021FinalIntelliJ:jar">
+    <output-path>$PROJECT_DIR$/out/artifacts/2021FinalIntelliJ_jar</output-path>
+    <root id="archive" name="2021FinalIntelliJ.jar">
+      <element id="module-output" name="2021FinalIntelliJ" />
+    </root>
+  </artifact>
+</component>
