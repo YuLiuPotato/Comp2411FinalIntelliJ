@@ -56,6 +56,8 @@ public class Disk {
                 cwd = cwd.getParent();
                 path.removeLast();
             }
+        }else if (name.compareTo(".") == 0){
+            //do nothing
         }else{
             cwd = cwd.findDir(name);
             path.addLast(name);

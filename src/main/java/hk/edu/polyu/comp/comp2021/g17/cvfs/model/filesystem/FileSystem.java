@@ -52,7 +52,7 @@ public class FileSystem {
         commandHistory = new ArrayList<String>();
         canAddToHistory = new ArrayList<String>();
         canAddToHistory.addAll(Arrays.asList("newDisk","newDir","newDoc","delete","newSimpleCri"
-        ,"newNegation","newBinaryCri","store","load","undo","redo"));
+        ,"newNegation","newBinaryCri","store","load","rename"));
         commandPtr = -1;
         redoStack = new LinkedList<String>();
         Scanner sc = new Scanner(System.in);
@@ -66,10 +66,11 @@ public class FileSystem {
             if (currentDisk == null) System.out.print("$: ");
             else System.out.print("$" + currentDisk.toString() + " ");
             try {
-                if (!sc.hasNext(commandPattern)) throw new IllegalArgumentException("Command not found");
+                commandName = sc.next();
+                if (! Pattern.matches(commandPattern, commandName)) throw new IllegalArgumentException("Command not found");
 
                 else {
-                    commandName = sc.next();
+
                     args = sc.nextLine();
 
                     try {
@@ -89,14 +90,13 @@ public class FileSystem {
 
                     } catch(NoSuchMethodException e) {
                         //this exception should never be triggered
-                        e.printStackTrace();
                     } catch(InvocationTargetException ie) {
                         throw ie.getCause();
                     }
                 }
 
             }catch(Throwable e) {
-                e.printStackTrace();
+                System.out.println(e.getMessage());
             }
 
         }
@@ -150,6 +150,7 @@ public class FileSystem {
         try {
             String name = sc.next();
             if (sc.hasNext()) throw new UsageException("Usage: newDir <dirName>");
+            if (currentDisk == null) throw new MemoryException("No disk found. Try command 'newDisk' first");
             currentDisk.newDir(name);
         }catch(NoSuchElementException e) {
             throw new UsageException("Usage: newDir <dirName>");
@@ -176,6 +177,8 @@ public class FileSystem {
             String type = sc.next("(html|txt|css|java)");
             String content = sc.next("\".*\"");
             if (sc.hasNext()) throw new UsageException("Usage: newDoc <name, type, content>");
+            if (currentDisk == null) throw new MemoryException("No disk found. Try command 'newDisk' first");
+
             DocumentType dType;
             if (type.compareTo("html") == 0) dType = DocumentType.html;
             else if (type.compareTo("txt") == 0) dType = DocumentType.txt;
@@ -183,8 +186,7 @@ public class FileSystem {
             else dType = DocumentType.java;
             currentDisk.newDoc(name, dType, content);
         }catch(NoSuchElementException e) {
-            e.printStackTrace();
-            throw new UsageException("Usage: newDoc <name, type, content>");
+            throw new UsageException("Usage: newDoc <name, type, \"content\"> (content should be double quoted");
         }
 
     }
@@ -201,6 +203,8 @@ public class FileSystem {
         try {
             String name = sc.next();
             if (sc.hasNext())  throw new UsageException("Usage: delete <docName>");
+            if (currentDisk == null) throw new IllegalArgumentException("No disk found. Try command 'newDisk' first");
+
             currentDisk.delete(name);
         }catch(NoSuchElementException e) {
             throw new UsageException("Usage: delete <docName>");
@@ -223,6 +227,8 @@ public class FileSystem {
             String oldName = sc.next();
             String newName = sc.next();
             if (sc.hasNext()) throw new UsageException("Usage: rename <oldName, newName>");
+            if (currentDisk == null) throw new IllegalArgumentException("No disk found. Try command 'newDisk' first");
+
             currentDisk.rename(oldName, newName);
         }catch(NoSuchElementException e) {
             throw new UsageException("Usage: rename <oldName, newName>");
@@ -243,6 +249,8 @@ public class FileSystem {
         try {
             String name = sc.next();
             if (sc.hasNext()) throw new UsageException("Usage: changeDir <dirName>");
+            if (currentDisk == null) throw new IllegalArgumentException("No disk found. Try command 'newDisk' first");
+
             currentDisk.changeDir(name);
         }catch(NoSuchElementException e) {
             throw new UsageException("Usage: changeDir <dirName>");
@@ -258,10 +266,11 @@ public class FileSystem {
      * @throws UsageException thrown when args is not an empty String
      */
     public void list(String args) throws UsageException {
-        System.out.println("Calling list");
         Scanner sc = new Scanner(args);
         try {
             if (sc.hasNext()) throw new UsageException("Usage: list");
+            if (currentDisk == null) throw new IllegalArgumentException("No disk found. Try command 'newDisk' first");
+
             currentDisk.list();
         }finally {
             sc.close();
@@ -277,6 +286,8 @@ public class FileSystem {
         Scanner sc = new Scanner(args);
         try {
             if (sc.hasNext()) throw new UsageException("Usage: rList <>");
+            if (currentDisk == null) throw new IllegalArgumentException("No disk found. Try command 'newDisk' first");
+
             currentDisk.rList();
         }finally {
             sc.close();
@@ -377,6 +388,8 @@ public class FileSystem {
 
         if (sc.hasNext()) throw new UsageException("Usage: printAllCriteria <>");
 
+        String.format("%15s | %10s | %15s | %20s","name", "Attribute", "Operator", "Oprand");
+
         for (Criterion c : criteria.values()) {
             System.out.println(c.toString());
         }
@@ -396,6 +409,8 @@ public class FileSystem {
             String criName = sc.next();
             Criterion cri = criteria.get(criName);
             if (cri == null) throw new IllegalArgumentException("Criterion '" + criName + "' does not exist");
+            if (currentDisk == null) throw new IllegalArgumentException("No disk found. Try command 'newDisk' first");
+
 
             ArrayList<File> files = currentDisk.getcwd().getFiles();
 
@@ -423,6 +438,7 @@ public class FileSystem {
             String criName = sc.next();
             Criterion cri = criteria.get(criName);
             if (cri == null) throw new IllegalArgumentException("Criterion '" + criName + "' does not exist");
+            if (currentDisk == null) throw new IllegalArgumentException("No disk found. Try command 'newDisk' first");
 
             ArrayList<File> files = currentDisk.getcwd().rGetFiles();
 
@@ -454,18 +470,16 @@ public class FileSystem {
 
     private Path buildPath(String pathString) {
         String[] paths = pathString.split("\\\\");
-        System.out.println(Arrays.toString(paths));
         String[] pathArray = new String[paths.length-1];
         for(int i=1; i<paths.length; i++) {
             pathArray[i-1] = paths[i];
         }
-        System.out.println(Arrays.toString(pathArray));
         Path path = FileSystems.getDefault().getPath(paths[0].trim(),pathArray);
 
         return path;
     }
 
-    private void store(Directory dir, Path path) {
+    private void store(Directory dir, Path path) throws IOException {
         //create a directory in path
         path = extendPath(path, dir.getName());
 
@@ -484,8 +498,8 @@ public class FileSystem {
                     BufferedWriter bw = Files.newBufferedWriter(extendPath(path,file.getName() + "." + ((Document)file).getDocumentType().name()));
                     bw.write((String)file.getContent());
                     bw.close();
-                }catch(Exception e) {
-                    e.printStackTrace();
+                }catch(IOException e) {
+                    throw e;
                 }
             }
 
@@ -494,8 +508,8 @@ public class FileSystem {
                 try {
 
                     store((Directory)file,path);
-                } catch (Exception e) {
-                    e.printStackTrace();
+                } catch (IOException e) {
+                    throw e;
                 }
             }
         }
@@ -505,6 +519,7 @@ public class FileSystem {
      * Store the current Disk to Local File System
      * Only support Windows System
      * @param args User input argument String. A directory path is expected, where the files shall be stored
+     *             A path should be in the format like "C:\\users\\Pubilc", or IOException shall be thrown
      * @throws UsageException thrown when argument count does not match
      * @throws IOException thrown when unexpected IO operation occurs
      */
@@ -514,6 +529,8 @@ public class FileSystem {
         try {
             String input = sc.nextLine();
             Path path = buildPath(input);
+
+            if (currentDisk == null) throw new IllegalArgumentException("No disk found. Try command 'newDisk' first");
 
             store(currentDisk.getRoot(),path);
         }catch(NoSuchElementException nsee) {
@@ -572,6 +589,7 @@ public class FileSystem {
      * Load from local file System to Comp Vitural File System
      * Only support Windows System
      * @param args User input argument String. A path name is expected.
+     *             A path should be in the format like "C:\\users\\Pubilc", or IOException shall be thrown
      * @throws UsageException thrown when argument count does not match
      * @throws IOException thrown when unexpected IO operation occurs
      */
@@ -580,8 +598,8 @@ public class FileSystem {
 
         try {
             String input = sc.nextLine();
-            System.out.println(input);
             Path path = buildPath(input);
+            if (currentDisk == null) throw new IllegalArgumentException("No disk found. Try command 'newDisk' first");
 
             load(path,currentDisk.getcwd());
 
@@ -618,7 +636,7 @@ public class FileSystem {
 
         Scanner sc = new Scanner(commandHistory.get(commandPtr));
         String command = sc.next();
-        String first, second;
+        String first,second;
 
         switch(string2Command(command)) {
             case newDir:
@@ -639,7 +657,7 @@ public class FileSystem {
     }
 
     /**
-     * redo the last undo command
+     * redo the last undid command
      * @param args User input argument String. An empty String is exptected
      * @throws UsageException thrown when argument count does not match
      * @throws MemoryException thrown when the operation cannot perform normally
@@ -650,6 +668,7 @@ public class FileSystem {
         if (scin.hasNext()) throw new UsageException("Usage: undo <>");
         scin.close();
 
+        if (redoStack.isEmpty()) throw new UsageException("No command history");
         Scanner sc = new Scanner(redoStack.pop());
         String command = sc.next();
 

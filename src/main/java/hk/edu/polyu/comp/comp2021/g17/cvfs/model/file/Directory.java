@@ -119,7 +119,7 @@ public class Directory extends File{
      */
     public void newDir(String name) throws IllegalArgumentException {
         Directory newdir = new Directory(name,this);
-        changeSize(this, newdir,'+');
+        changeSize(this.getParent(), newdir,'+');
     }
 
     /**
@@ -199,18 +199,18 @@ public class Directory extends File{
 
         int number = 0, size = 0;
 
-        System.out.println("\nIn directory " + this.getName() + ": ");
+        System.out.println("In directory " + this.getName() + ": ");
 
         while (it.hasNext()){
             String itFile = it.next();
             if (itFile.compareTo(".") == 0 || itFile.compareTo("..") == 0) continue;
 
             if(content.get(itFile) instanceof Directory){
-                System.out.println("  Directory: " + itFile + " | Size: " + this.content.get(itFile).getSize() );
+                System.out.println("\tDirectory: " + itFile + " | Size: " + this.content.get(itFile).getSize() );
             }
 
             else{
-                System.out.println(("  Document: " + (Document)content.get(itFile)).toString() +
+                System.out.println(("\tDocument: " + (Document)content.get(itFile)).toString() +
                         " | Size: " + this.content.get(itFile).getSize());
             }
 
@@ -245,11 +245,21 @@ public class Directory extends File{
      * Recursively list all files in this directory
      */
     public void rList(){
-        rList(0);
+        System.out.println("In directory " + this.getName() + ":");
+        rList(1);
     }
 
     @Override
-    public String toString() {
+    public String toString(){
+        return this.getName();
+    }
+
+    /**
+     * For debugging
+     * @param arg an integer
+     * @return a list of file this directory contains
+     */
+    public String toString(int arg) {
         StringBuilder sb = new StringBuilder();
         sb.append("[");
         int i = 0;

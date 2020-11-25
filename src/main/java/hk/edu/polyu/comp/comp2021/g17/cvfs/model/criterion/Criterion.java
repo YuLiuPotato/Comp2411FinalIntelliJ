@@ -185,6 +185,14 @@ public abstract class Criterion{
                 return new NameCri(name, val);
 
             case size:
+                if (op.trim().compareTo(">") == 0) op = "G";
+                else if (op.trim().compareTo(">=") == 0) op = "GE";
+                else if (op.trim().compareTo("<") == 0) op = "L";
+                else if (op.trim().compareTo("<=") == 0) op = "LE";
+                else if (op.trim().compareTo("==") == 0) op = "E";
+                else if (op.trim().compareTo("!=") == 0) op = "NE";
+                else throw new IllegalArgumentException("No such operator: " + op);
+
                 try {
                     return new SizeCri(name, string2Op(op), Integer.parseInt(val));
                 }catch(NumberFormatException nfe) {
