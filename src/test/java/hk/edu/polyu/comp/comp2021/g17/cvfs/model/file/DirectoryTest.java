@@ -12,6 +12,7 @@ import hk.edu.polyu.comp.comp2021.g17.cvfs.model.exception.*;
 
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
+import java.util.Iterator;
 
 class DirectoryTest {
 
@@ -24,6 +25,7 @@ class DirectoryTest {
 	static void constructorAndToStringTest() throws IllegalArgumentException, IllegalArgumentException {
 		Directory testDir1 = new Directory("testDir1", null);
 		assertEquals("[.]", testDir1.toString(1), "Directory should be initialized.");
+		assertEquals("testDir1", testDir1.toString(), "Directory should be initialized.");
 		Directory testDir2 = new Directory("testDir2", testDir1);
 		assertEquals("[.,..]", testDir2.toString(1), "Directory should be initialized.");
 		assertEquals("[.,testDir2]", testDir1.toString(1), "Parent directory should detect changes (in dirent)");
@@ -41,7 +43,14 @@ class DirectoryTest {
 		System.out.println(d2);
 		*/
 	}
+	@Test
+	void IteratorTest(){
+		Iterator<File> iterF =  d1.getContent().iterator();
+		assertEquals(iterF.next().getName(),"dir1");
+		assertEquals(iterF.next().getName(),"root");
+		assertEquals(iterF.next().getName(),"dir2");
 
+	}
 	@Test
 	void newDirTest() {
 		try {
@@ -73,6 +82,16 @@ class DirectoryTest {
 			assertEquals(1, 2, "No exception shall be thrown");
 		}
 	}
+	@Test
+	void newDocChangeNameTest(){
+		String a = null;
+		assertThrows(IllegalArgumentException.class,()->d2.newDoc("Pig","i am a pig",a));//check null
+		int d0InitSize = d0.getSize();
+		d2.newDoc("Pig","i am a pig","txt");
+		assertEquals("[.,..,Pig]",d2.toString(1));
+		assertEquals(d0InitSize+d2.findDoc("Pig").getSize(),d0.getSize());
+
+	}
 
 	@Test
 	void deleteTest() {
@@ -102,6 +121,12 @@ class DirectoryTest {
 			assertEquals("[.,..,testDocRe]", d2.toString(1), "file should be renamed");
 			assertThrows(IllegalArgumentException.class, () -> d2.rename("nosuchfile", "nosuchname"),
 					"Cannot rename a file that does not exist");
+			assertThrows(IllegalArgumentException.class, () -> d2.rename("testDocRe", "Wrong_"),
+					"Wrong input can't be accepted");
+			assertThrows(IllegalArgumentException.class, () -> d2.rename("testDocRe", ""),
+					"Wrong input can't be accepted");
+			assertThrows(IllegalArgumentException.class, () -> d2.rename("testDocRe", "12312314431"),
+					"Wrong input can't be accepted");
 		} catch (Exception e) {
 			e.printStackTrace();
 			assertEquals(1, 2, "No exception shall be thrown");
@@ -152,10 +177,10 @@ class DirectoryTest {
 			d2.newDir("rabbit");
 			d2.findDir("rabbit").newDoc("pigHome", "this is my home", DocumentType.txt);
 			d2.rList();
-			String expectedOut = "In directory dir2:\r\n" +
-					"\tDocument: pig.txt | Size: 60\r\n" +
-					"\tDirectory: rabbit | Size: 110\r\n" +
-					"\t\tDocument: pigHome.txt | Size: 70\r\n";
+			String expectedOut = "In directory dir2:\n" +
+					"\tDocument: pig.txt | Size: 60\n" +
+					"\tDirectory: rabbit | Size: 110\n" +
+					"\t\tDocument: pigHome.txt | Size: 70\n";
 
 			assertEquals(testOut.toString(),expectedOut);
 			System.setOut(Oriout);
