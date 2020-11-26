@@ -30,27 +30,27 @@ public class FileSystem {
     /**
      * set public for testing purpose
      */
-    public ArrayList<Disk> disks = new ArrayList<Disk>();
+    private ArrayList<Disk> disks = new ArrayList<Disk>();
     /**
      * set public for testing purpose
      */
-    public Disk currentDisk;
+    private Disk currentDisk;
     /**
      * set public for testing purpose
      */
-    public HashMap<String,Criterion> criteria = new HashMap<String, Criterion>();
+    private HashMap<String,Criterion> criteria = new HashMap<String, Criterion>();
     /**
      * set public for testing purpose
      */
-    public ArrayList<String> commandHistory = new ArrayList<String>();
+    private ArrayList<String> commandHistory = new ArrayList<String>();
     /**
      * set public for testing purpose
      */
-    public LinkedList<String> redoStack = new LinkedList<String>();
+    private LinkedList<String> redoStack = new LinkedList<String>();
     /**
      * set public for testing purpose
      */
-    public int commandPtr = -1; //points to last command
+    private int commandPtr = -1; //points to last command
 
     /**
      * set public for testing purpose
@@ -651,4 +651,61 @@ public class FileSystem {
         }
     }
 
+    public ArrayList<Disk> getDisks() {
+        return disks;
+    }
+/*
+    public void setDisks(ArrayList<Disk> disks) {
+        this.disks = disks;
+    }
+*/
+    public ArrayList<String> getCommandHistory() {
+        return commandHistory;
+    }
+/*
+    public void setCommandHistory(ArrayList<String> commandHistory) {
+        this.commandHistory = commandHistory;
+    }
+
+    public ArrayList<String> getCanAddToHistory() {
+        return canAddToHistory;
+    }
+    */
+/*
+    public void setCanAddToHistory(ArrayList<String> canAddToHistory) {
+        this.canAddToHistory = canAddToHistory;
+    }
+*/
+    public Disk getCurrentDisk() {
+        return currentDisk;
+    }
+/*
+    public void setCurrentDisk(Disk currentDisk) {
+        this.currentDisk = currentDisk;
+    }
+*/
+    public HashMap<String, Criterion> getCriteria() {
+        return criteria;
+    }
+/*
+    public void setCriteria(HashMap<String, Criterion> criteria) {
+        this.criteria = criteria;
+    }
+
+    public LinkedList<String> getRedoStack() {
+        return redoStack;
+    }
+
+    public void setRedoStack(LinkedList<String> redoStack) {
+        this.redoStack = redoStack;
+    }
+    */
+
+    public int getCommandPtr() {
+        return commandPtr;
+    }
+
+    public void setCommandPtr(int commandPtr) {
+        this.commandPtr = commandPtr;
+    }
 }
