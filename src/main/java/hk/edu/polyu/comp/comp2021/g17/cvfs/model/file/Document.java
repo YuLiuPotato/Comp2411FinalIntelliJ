@@ -25,6 +25,7 @@ public class Document extends File {
      */
     public Document(String name, DocumentType type, String content) throws IllegalArgumentException {
         super(FileType.Document, name, BASE + SCALE * content.length(), content);
+        if(type == null) throw new IllegalArgumentException();
         this.type = type;
     }
 
