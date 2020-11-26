@@ -97,11 +97,9 @@ public enum Op {
                 return NOT_AND;
             case NOT_OR:
                 return OR;
-            case NOT_AND:
-                return NOT_AND;
             default:
-                //never reached
-                return null;
+                return NOT_AND;
+           
         }
 
     }
