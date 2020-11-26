@@ -102,6 +102,7 @@ public class Directory extends File{
      */
     public void newDoc(String name, String content, String type) throws IllegalArgumentException {
         DocumentType rightOne = null;
+        if(type ==null) throw new IllegalArgumentException();
         for (DocumentType t:DocumentType.values()) {
             if (t.name().compareTo(type) == 0) {
                 rightOne = t;
@@ -138,16 +139,15 @@ public class Directory extends File{
         return ((int)character >= (int) '0' && (int)character <= (int) '9') || ((int)character >= (int) 'A' && (int)character <= (int) 'Z') || ((int)character >= (int) 'a' && (int)character <= (int) 'z');
     }
 
+
     private boolean isNameLegal(String name){
-        if ( name != null && name.length() <= 10) {
-            for (int i = 0; i < name.length(); i++) {
-                if (!isLetterOrDigit(name.charAt(i)) ) {
-                    return false;
-                }
+        if(name == null || name.length()>10 ||name.length()==0) return false;
+        for (int i = 0; i < name.length(); i++) {
+            if (!isLetterOrDigit(name.charAt(i)) ) {
+                return false;
             }
-            return true;
         }
-        return false;
+        return true;
     }
 
     /**
