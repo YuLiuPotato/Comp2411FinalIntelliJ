@@ -53,18 +53,24 @@ class FileSystemTest {
     @Test
     void undoRedoTest() {
         try {
+            int commandPtr = fileSystem.getCommandPtr();
             fileSystem.newDisk("10000");
-            fileSystem.commandHistory.add(++fileSystem.commandPtr,"newDisk 10000");
+            fileSystem.getCommandHistory().add(++commandPtr,"newDisk 10000");
+            fileSystem.setCommandPtr(commandPtr);
             fileSystem.newDir("dir1");
-            fileSystem.commandHistory.add(++fileSystem.commandPtr,"newDir dir1");
+            fileSystem.getCommandHistory().add(++commandPtr,"newDir dir1");
+            fileSystem.setCommandPtr(commandPtr);
             fileSystem.newDoc("abc txt \"haha\"");
-            fileSystem.commandHistory.add(++fileSystem.commandPtr,"newDoc abc txt \"haha\"");
+            fileSystem.getCommandHistory().add(++commandPtr,"newDoc abc txt \"haha\"");
+            fileSystem.setCommandPtr(commandPtr);
             fileSystem.rename("abc bcd");
-            fileSystem.commandHistory.add(++fileSystem.commandPtr,"rename abc bcd");
+            fileSystem.getCommandHistory().add(++commandPtr,"rename abc bcd");
+            fileSystem.setCommandPtr(commandPtr);
             fileSystem.undo("");
             fileSystem.redo("");
             fileSystem.delete("dir1");
-            fileSystem.commandHistory.add(++fileSystem.commandPtr,"delete dir1");
+            fileSystem.getCommandHistory().add(++commandPtr,"delete dir1");
+            fileSystem.setCommandPtr(commandPtr);
             assertThrows(UsageException.class, () -> fileSystem.redo(""));
         }catch(Exception e) {
             e.printStackTrace();
@@ -87,8 +93,8 @@ class FileSystemTest {
             //assertThrows(IllegalArgumentException.class, () -> fileSystem.newDisk("asdasd"));// ？
             String size = String.valueOf(60);
             fileSystem.newDisk(size);
-            assertEquals(fileSystem.disks.size(),2); // test disk in arrayList<disks>
-            Disk testdisk = fileSystem.disks.get(0);
+            assertEquals(fileSystem.getDisks().size(),2); // test disk in arrayList<disks>
+            Disk testdisk = fileSystem.getDisks().get(0);
             assertEquals(testdisk.toString(),"/:"); // test path
             assertEquals(testdisk.getRoot().getSize(),128); // test 40+ Total size of files it contained
             assertThrows(IllegalArgumentException.class, () -> fileSystem.newDisk("40")); // size <=40
@@ -108,11 +114,11 @@ class FileSystemTest {
             fileSystem.newDir(name);
             assertThrows(IllegalArgumentException.class, () -> fileSystem.newDir("."));//current size = 120
 
-            assertEquals(fileSystem.currentDisk.getcwd().findDir("Pig").getName(),"Pig"); // if pig inside root
-            assertEquals(fileSystem.currentDisk.getRoot(), fileSystem.currentDisk.getcwd()); // if cwd -> root
-            assertEquals(fileSystem.currentDisk.getRoot().getSize(),40+40);
+            assertEquals(fileSystem.getCurrentDisk().getcwd().findDir("Pig").getName(),"Pig"); // if pig inside root
+            assertEquals(fileSystem.getCurrentDisk().getRoot(), fileSystem.getCurrentDisk().getcwd()); // if cwd -> root
+            assertEquals(fileSystem.getCurrentDisk().getRoot().getSize(),40+40);
             //assertEquals(fileSystem.currentDisk.getCurrentSize(),40+40); // ? disk.currentsize should change(newdir)
-            assertEquals(fileSystem.currentDisk.getRoot().findDir("Pig").getSize(),40); // newdir"pig".size =40
+            assertEquals(fileSystem.getCurrentDisk().getRoot().findDir("Pig").getSize(),40); // newdir"pig".size =40
         }
         catch (Exception e){
             e.printStackTrace();
@@ -126,11 +132,11 @@ class FileSystemTest {
         //arrayDisk -- disks[0] -- Dir: (cwd)->Root(.(Di),Pig(Di),Pigweight(Do))
     void newDoctest(){
         try{
-            Document testdoc = fileSystem.currentDisk.getcwd().findDoc("PigWeight");
+            Document testdoc = fileSystem.getCurrentDisk().getcwd().findDoc("PigWeight");
             assertSame(testdoc.getDocumentType(), DocumentType.txt);
             assertEquals(testdoc.getContent(),"98kg");
             assertEquals(testdoc.getSize(),40+4*2);
-            assertEquals(fileSystem.currentDisk.getcwd().getSize(), 40+40+40+4*2);
+            assertEquals(fileSystem.getCurrentDisk().getcwd().getSize(), 40+40+40+4*2);
         }
         catch (Exception e){
             e.printStackTrace();
@@ -140,11 +146,11 @@ class FileSystemTest {
     void deleteTest(){
         try{
             fileSystem.delete("PigWeight");
-            assertThrows(IllegalArgumentException.class, ()->fileSystem.currentDisk.getcwd().findDoc("PigWeight"));
-            assertEquals(fileSystem.currentDisk.getcwd().getSize(),40+40);
+            assertThrows(IllegalArgumentException.class, ()->fileSystem.getCurrentDisk().getcwd().findDoc("PigWeight"));
+            assertEquals(fileSystem.getCurrentDisk().getcwd().getSize(),40+40);
             fileSystem.delete("Pig");
-            assertThrows(IllegalArgumentException.class, ()->fileSystem.currentDisk.getcwd().findDir("Pig"));
-            assertEquals(fileSystem.currentDisk.getcwd().getSize(),40);
+            assertThrows(IllegalArgumentException.class, ()->fileSystem.getCurrentDisk().getcwd().findDir("Pig"));
+            assertEquals(fileSystem.getCurrentDisk().getcwd().getSize(),40);
             assertThrows(IllegalArgumentException.class, ()->fileSystem.delete("."));
         }
         catch (Exception e){
@@ -155,13 +161,13 @@ class FileSystemTest {
     @Test
     void renameTest(){
         try{
-            int size = fileSystem.currentDisk.getcwd().findDir("Pig").getSize();
+            int size = fileSystem.getCurrentDisk().getcwd().findDir("Pig").getSize();
             assertThrows(IllegalArgumentException.class, ()->fileSystem.rename("Pi FatPig"));
             fileSystem.rename("Pig FatPig");
 
-            assertThrows(IllegalArgumentException.class, ()->fileSystem.currentDisk.getcwd().findDir("Pig"));
-            assertEquals(fileSystem.currentDisk.getcwd().findDir("FatPig").getName(),"FatPig");
-            assertEquals(fileSystem.currentDisk.getcwd().findDir("FatPig").getSize(),size);
+            assertThrows(IllegalArgumentException.class, ()->fileSystem.getCurrentDisk().getcwd().findDir("Pig"));
+            assertEquals(fileSystem.getCurrentDisk().getcwd().findDir("FatPig").getName(),"FatPig");
+            assertEquals(fileSystem.getCurrentDisk().getcwd().findDir("FatPig").getSize(),size);
 
         }
         catch (Exception e){
@@ -176,10 +182,10 @@ class FileSystemTest {
         try{
             assertThrows(IllegalArgumentException.class, ()->fileSystem.changeDir(".."));
             fileSystem.changeDir("Pig");
-            assertEquals(fileSystem.currentDisk.getcwd().getName(),"Pig");
-            assertEquals(fileSystem.currentDisk.getRoot().findDir("Pig"),fileSystem.currentDisk.getcwd());
-            assertEquals(fileSystem.currentDisk.getcwd().getSize(),40);
-            assertEquals(fileSystem.currentDisk.getcwd().findDir(".."),fileSystem.currentDisk.getRoot());
+            assertEquals(fileSystem.getCurrentDisk().getcwd().getName(),"Pig");
+            assertEquals(fileSystem.getCurrentDisk().getRoot().findDir("Pig"),fileSystem.getCurrentDisk().getcwd());
+            assertEquals(fileSystem.getCurrentDisk().getcwd().getSize(),40);
+            assertEquals(fileSystem.getCurrentDisk().getcwd().findDir(".."),fileSystem.getCurrentDisk().getRoot());
 
         }
         catch (Exception e){
@@ -244,16 +250,16 @@ class FileSystemTest {
             fileSystem.newSimpleCri("tc type equals txt");
             fileSystem.newSimpleCri("sn size > 40");
             assertThrows(UsageException.class, ()->fileSystem.newSimpleCri("ns pig sdc"));
-            assertTrue(fileSystem.criteria.containsKey("cn"));
-            assertTrue(fileSystem.criteria.containsKey("tc"));
-            assertTrue(fileSystem.criteria.containsKey("sn"));
+            assertTrue(fileSystem.getCriteria().containsKey("cn"));
+            assertTrue(fileSystem.getCriteria().containsKey("tc"));
+            assertTrue(fileSystem.getCriteria().containsKey("sn"));
             String expectedOut1 = "             cn |       name |        contains |                  Pig";
-            assertEquals(fileSystem.criteria.get("cn").toString(),expectedOut1);
+            assertEquals(fileSystem.getCriteria().get("cn").toString(),expectedOut1);
             String expectedOut2 = "             tc |       type |          equals |                  txt";
-            assertEquals(fileSystem.criteria.get("tc").toString(),expectedOut2);
+            assertEquals(fileSystem.getCriteria().get("tc").toString(),expectedOut2);
             String expectedOut3 = "             sn |       size |               G |                   40";
-            assertEquals(fileSystem.criteria.get("sn").toString(),expectedOut3);
-            assertFalse(fileSystem.criteria.get("cn").assertCri(fileSystem.currentDisk.getRoot())); // ? Pig should be contained in Root
+            assertEquals(fileSystem.getCriteria().get("sn").toString(),expectedOut3);
+            assertFalse(fileSystem.getCriteria().get("cn").assertCri(fileSystem.getCurrentDisk().getRoot())); // ? Pig should be contained in Root
             System.setOut(Oriout);
         }
         catch (Exception e){
@@ -281,9 +287,9 @@ class FileSystemTest {
             fileSystem.newSimpleCri("cn name contains PigWeight ");
             assertThrows(IllegalArgumentException.class, ()->fileSystem.newNegation("cnNegate cn"));
             fileSystem.newNegation("nc cn");
-            assertTrue(fileSystem.criteria.containsKey("nc"));
+            assertTrue(fileSystem.getCriteria().containsKey("nc"));
             String expectedOut = "             nc |       name |    not_contains |            PigWeight";
-            assertEquals(fileSystem.criteria.get("nc").toString(),expectedOut);
+            assertEquals(fileSystem.getCriteria().get("nc").toString(),expectedOut);
 //            assertFalse(fileSystem.criteria.get("nc").assertCri(fileSystem.currentDisk.getRoot())); //? not_contains pigWeight should be false
             System.setOut(Oriout);
         }catch (Exception e){
@@ -300,10 +306,10 @@ class FileSystemTest {
             fileSystem.newSimpleCri("sn size <= 50");
             assertThrows(IllegalArgumentException.class, ()->fileSystem.newBinaryCri("Tn cn && sp"));
             fileSystem.newBinaryCri("TN cn AND sn"); // ? wrong design input in filesystem
-            assertTrue(fileSystem.criteria.containsKey("TN"));
+            assertTrue(fileSystem.getCriteria().containsKey("TN"));
             String expectedOut = "             TN |  composite |             AND |                cn sn";
-            assertEquals(fileSystem.criteria.get("TN").toString(),expectedOut);
-            assertTrue(!fileSystem.criteria.get("TN").assertCri(fileSystem.currentDisk.getRoot()));
+            assertEquals(fileSystem.getCriteria().get("TN").toString(),expectedOut);
+            assertTrue(!fileSystem.getCriteria().get("TN").assertCri(fileSystem.getCurrentDisk().getRoot()));
             System.setOut(Oriout);
         }catch (Exception e){
             e.printStackTrace();
