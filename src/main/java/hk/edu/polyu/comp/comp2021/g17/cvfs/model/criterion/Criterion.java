@@ -103,11 +103,11 @@ public abstract class Criterion{
             case type:
             case filetype:
                 return typeOps.contains(op) && (val instanceof DocumentType || val instanceof FileType);
-            case composite:
+            default:
                 return compOps.contains(op) && val instanceof String;
         }
 
-        return false;
+       
     }
 
     /**
@@ -242,18 +242,14 @@ public abstract class Criterion{
      * @return the Criterion 'isDocument'
      */
     public static Criterion genIsDocument() {
-        try{
+       
             return new Criterion("isDocument", AttrName.filetype, Op.equals, FileType.Document) {
                 @Override
                 public boolean assertCri(File file) {
                     return file.getFileType() == FileType.Document;
                 }
             };
-        }catch(IllegalArgumentException e){
-            //never reached
-            e.printStackTrace();
-            return null;
-        }
+       
     }
 
     @Override
@@ -278,14 +274,11 @@ public abstract class Criterion{
             switch (bo) {
                 case AND:
                     return c1.assertCri(file) && c2.assertCri(file);
-                case OR:
-                    return c1.assertCri(file) || c2.assertCri(file);
                 default:
-                    //never reached
-                    break;
+                    return c1.assertCri(file) || c2.assertCri(file);
+               
             }
-            //never reached
-            return false;
+         
         }
     }
 }
