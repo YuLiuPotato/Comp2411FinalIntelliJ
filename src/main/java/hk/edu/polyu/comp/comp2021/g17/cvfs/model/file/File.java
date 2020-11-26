@@ -62,15 +62,13 @@ public abstract class File {
     }
 
     private boolean isNameLegal(String name){
-        if ( name != null && name.length() <= 10) {
-            for (int i = 0; i < name.length(); i++) {
-                if (!isLetterOrDigit(name.charAt(i)) ) {
-                    return false;
-                }
+        if(name == null || name.length()>10 ||name.length()==0) return false;
+        for (int i = 0; i < name.length(); i++) {
+            if (!isLetterOrDigit(name.charAt(i)) ) {
+                return false;
             }
-            return true;
         }
-        return false;
+        return true;
     }
 
     /**
